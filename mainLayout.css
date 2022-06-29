@@ -18,4 +18,10 @@
 	height: 400px;
 	width: 400px;
 	background-color: black;
+	z-index: 1;
+}
+
+svg {
+	position: absolute;
+	z-index: 99;
 }

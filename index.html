@@ -24,6 +24,7 @@
 	//data model
 	var board;
 
+
 // This allows the Javascript code inside this block to only run when the page
 // has finished loading in the browser.
 $(document).ready(function() {
@@ -88,9 +89,32 @@ $(document).ready(function() {
 		checkerPiece.src = images[colorIndex]
 		checkerPiece.className = "checkerPieces"
 		checkerPiece.style = "max-height:100%; max-height:100%;"
+		boxDiv.children[toCheckerIndex].append(checkerPiece);
 
+		//set arrow here
+		var startingPosition = boxDiv.children[fromCheckerIndex]
+		var endingPosition = boxDiv.children[toCheckerIndex]
+		console.log(startingPosition)
+		console.log(startingPosition.offsetLeft)
+
+		startingX = startingPosition.offsetLeft + ((400/board.boardSize) / 2)
+		startingY = startingPosition.offsetTop + ((400/board.boardSize) / 2)
+
+		endingX = endingPosition.offsetLeft + ((400/board.boardSize) / 2)
+		endingY = endingPosition.offsetTop + ((400/board.boardSize) / 2)
+
+		console.log("Starting Point\t X: " + startingX + " Y: " + startingY )
+		console.log("Ending Point\t X: " + endingX + " Y: " + endingY )
+
+		$("#arrow")[0].attributes.x1.value = startingX
+		$("#arrow")[0].attributes.y1.value = startingY
+		$("#arrow")[0].attributes.x2.value = endingX
+		$("#arrow")[0].attributes.y2.value = endingY
+		console.log($("#arrow"))
 		
-		boxDiv.children[toCheckerIndex].append(checkerPiece)
+		
+
+
 
 	},true);
 
@@ -201,8 +225,15 @@ $.extend({
 
 		<td id="content">
 			<!-- Your code here -->
-			<div id="box">
-				
+			<div id="overlay">
+
+				<svg height="600" width="1000">
+					<line id="arrow" x1="0" y1="0" x2="0" y2="0" style="stroke:yellow;stroke-width:3"/>
+				</svg>
+
+				<div id="box">
+					
+				</div>
 			</div>
 		</td>
 	</tr>
