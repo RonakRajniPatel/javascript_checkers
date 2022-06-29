@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+
+<!--
+  COLLABORATORS:
+  
+-->
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Checkerboard</title>
+
+<!-- Load style sheets -->
+<link rel="stylesheet" type="text/css" href="mainLayout.css" />
+
+<!-- Load any supplemental Javascript libraries here -->
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="checker.js"></script>
+<script type="text/javascript" src="boardEvent.js"></script>
+<script type="text/javascript" src="board.js"></script>
+
+<script type="text/javascript">
+	var DEFAULT_BOARD_SIZE = 8;
+	//data model
+	var board;
+
+// This allows the Javascript code inside this block to only run when the page
+// has finished loading in the browser.
+$(document).ready(function() {
+
+	if ($.getUrlVar('size') && $.getUrlVar('size') >= 6){
+		board = new Board($.getUrlVar('size'));
+	} 
+	else {
+		board = new Board(DEFAULT_BOARD_SIZE);
+	}
+	
+	// Your code here
+
+	board.addEventListener('add',function (e) {
+		// Your code here
+		console.log("add")
+		var images = ["graphics/red-piece.png", "graphics/black-piece.png"]
+		var colorIndex
+		if (e.details.checker.color == "red") {
+			colorIndex = 0
+		}
+		else {
+			colorIndex = 1
+		}
+		var checkerIndex = (e.details.checker.row * board.boardSize) + e.details.checker.col
+		const boxDiv = document.getElementById("box")
+		var checkerPiece = document.createElement("img")
+		checkerPiece.src = images[colorIndex]
+		checkerPiece.className = "checkerPieces"
+		checkerPiece.style = "max-height:100%; max-height:100%;"
+		boxDiv.children[checkerIndex].append(checkerPiece)
+		
+
+	},true);
+
+	board.addEventListener('move',function (e) {
+		// Your code here
+		console.log("move")
+		console.log(e)
+		var fromCheckerIndex = (e.details.fromRow * board.boardSize) + e.details.fromCol
+		var toCheckerIndex = (e.details.toRow * board.boardSize) + e.details.toCol
+		const boxDiv = document.getElementById("box")
+		boxDiv.children[fromCheckerIndex].children[0].remove()
+
+		
+		var images = ["graphics/red-piece.png", "graphics/black-piece.png", "graphics/red-king.png", "graphics/black-king.png"]
+		var colorIndex
+		if (e.details.checker.color == "red" && !e.details.checker.isKing) {
+			colorIndex = 0
+		}
+		else if (e.details.checker.color == "black" && !e.details.checker.isKing){
+			colorIndex = 1
+		}
+		else if (e.details.checker.color == "red" && e.details.checker.isKing){
+			colorIndex = 2
+		}
+		else if (e.details.checker.color == "black" && e.details.checker.isKing){
+			colorIndex = 3
+		}
+
+		var checkerPiece = document.createElement("img")
+		checkerPiece.src = images[colorIndex]
+		checkerPiece.className = "checkerPieces"
+		checkerPiece.style = "max-height:100%; max-height:100%;"
+
+		
+		boxDiv.children[toCheckerIndex].append(checkerPiece)
+
+	},true);
+
+	board.addEventListener('remove',function (e) {
+		// Your code here
+		console.log("remove")
+		console.log(e)
+		var checkerIndex = (e.details.checker.row * board.boardSize) + e.details.checker.col
+		const boxDiv = document.getElementById("box")
+		boxDiv.children[checkerIndex].children[0].remove()
+
+	},true);
+
+	board.addEventListener('promote',function (e) {
+		// Your code here
+		
+		console.log("promote")
+		console.log(e)
+
+		var images = ["graphics/red-king.png", "graphics/black-king.png"]
+		var colorIndex
+		if (e.details.checker.color == "red") {
+			colorIndex = 0
+		}
+		else {
+			colorIndex = 1
+		}
+		
+		console.log("boardsize: "+ board.boardSize +"\trow:  "+ e.details.checker.row + "\tcol:  "+ e.details.checker.col)
+		var checkerIndex = (e.details.checker.row * board.boardSize) + e.details.checker.col		
+		console.log(checkerIndex)
+
+		const boxDiv = document.getElementById("box")
+		var checkerPiece = document.createElement("img")
+		checkerPiece.src = images[colorIndex]
+		checkerPiece.className = "checkerPieces"
+		checkerPiece.style = "max-height:100%; max-height:100%;"
+
+
+		boxDiv.children[checkerIndex].children[0].remove()
+		boxDiv.children[checkerIndex].append(checkerPiece)
+
+	},true);
+
+	$("#btnNewGame").click(function(evt) {
+		$('#box').empty();
+		board.setSquares();
+		board.prepareNewGame();
+	});
+
+	$("#btnMoveRandomly").click(function(evt) {
+		randomChecker = board.getRandomChecker();
+		randomLoc = board.getRandomEmptyLocation();
+		
+		if (randomChecker && randomLoc){
+			board.moveTo(randomChecker, randomLoc.row, randomLoc.col);
+		}
+	});
+
+	$("#btnKingRandomly").click(function(evt) {
+		randomChecker = board.getRandomNonKing();
+		board.promote(randomChecker);
+	});
+
+	$("#btnClear").click(function(evt) {
+		board.clear();
+	});
+
+	//board.prepareNewGame();
+});
+
+// This script extracts parameters from the URL
+// from jquery-howto.blogspot.com
+$.extend({
+  getUrlVars: function(){
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+      hash = hashes[i].split('=');
+      vars.push(hash[0]);
+      vars[hash[0]] = hash[1];
+    }
+    return vars;
+  },
+  getUrlVar: function(name){
+    return $.getUrlVars()[name];
+  }
+});
+
+</script>
+
+
+</head>
+
+<body>
+
+<table id="mainTable">
+	<tr>
+		<td id="navigation">
+			<table>
+				<tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
+				<tr><td><input id="btnMoveRandomly" type="button" name="moveRandomly" value="Move Randomly"/></td></tr>
+				<tr><td><input id="btnKingRandomly" type="button" name="kingRandomly" value="King Randomly"/></td></tr>
+				<tr><td><input id="btnClear" type="button" name="clear" value="Clear"/></td></tr>
+			</table>
+		</td>
+
+		<td id="content">
+			<!-- Your code here -->
+			<div id="box">
+				
+			</div>
+		</td>
+	</tr>
+	
+   </table>
+
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+﻿#navigation{
+	width:140px
+}
+
+#navigation table{
+	width:100%
+}
+
+#navigation input{
+	width:100%
+}
+
+#content{
+	background-color:gray;
+}
+
+#box {
+	height: 400px;
+	width: 400px;
+	background-color: black;
+}
